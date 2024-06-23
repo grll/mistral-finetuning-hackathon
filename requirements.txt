@@ -7,3 +7,5 @@ beautifulsoup4==4.12.3
 lxml==5.2.2
 ipykernel==6.29.4
 pyautogen==0.2.30
+uvicorn==0.30.1
+fastapi==0.111.0
