@@ -9,3 +9,7 @@ ipykernel==6.29.4
 pyautogen==0.2.30
 uvicorn==0.30.1
 fastapi==0.111.0
+matplotlib==3.9.0
+pandas==2.2.2
+scikit-learn==1.5.0
+lightgbm==4.4.0
