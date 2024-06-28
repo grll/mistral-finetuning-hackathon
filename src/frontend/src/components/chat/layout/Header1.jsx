@@ -7,13 +7,16 @@ import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
+import SvgIcon from '@mui/material/SvgIcon';
+
+import logo from '../../../assets/logo.svg'; // Import the SVG logo
 
 function Header1(props) {
   const { onDrawerToggle } = props;
 
   return (
     <React.Fragment>
-      <AppBar color="primary" position="sticky" elevation={0}>
+      <AppBar sx={{ backgroundColor: "#DA291C" }} position="sticky" elevation={0}>
         <Toolbar>
           <Grid container spacing={1} alignItems="center">
             <Grid sx={{ display: { sm: 'none', xs: 'block' } }} item>
@@ -28,11 +31,7 @@ function Header1(props) {
             </Grid>
             <Grid item xs />
             <Grid item>
-              <Tooltip title="Alerts • No alerts">
-                <IconButton color="inherit">
-                  <NotificationsNoneOutlinedIcon />
-                </IconButton>
-              </Tooltip>
+              <img src={logo} alt="Logo" style={{ height: 40 }} />
             </Grid>
           </Grid>
         </Toolbar>
