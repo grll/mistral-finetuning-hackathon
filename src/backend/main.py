@@ -1,3 +1,6 @@
+import re
+import json
+
 from fastapi import FastAPI, WebSocket
 from autogen_chat import AutogenChat
 import asyncio
@@ -54,6 +57,16 @@ async def receive_from_client(autogen_chat: AutogenChat):
         await asyncio.sleep(0.05)
 
 
+# Define a function to extract the case summary
+def extract_case_summary(text):
+    # Use regex to find the text starting with "Case Summary:" and ending before the next paragraph
+    match = re.search(r"Case Summary:(.*?)(?:\n\n|$)", text, re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    else:
+        return None
+
+
 @app.websocket("/ws/{chat_id}")
 async def websocket_endpoint(websocket: WebSocket, chat_id: str):
     try:
@@ -63,8 +76,28 @@ async def websocket_endpoint(websocket: WebSocket, chat_id: str):
         _ = asyncio.gather(
             send_to_client(autogen_chat), receive_from_client(autogen_chat)
         )
+        print("before clarify")
         await autogen_chat.clarify(data)
+        print("after clarify")
 
+        last_dona_message = autogen_chat.agent_dona.last_message()["content"]
+        case_summary = extract_case_summary(last_dona_message)
+
+        # classify the case summary
+        # call the retrieve function
+        # reply as rachel:
+        reply = {
+            "sender": "rachel",
+            "content": "To solve your case you should use article 1 and 2",
+            "sources": [
+                {
+                    "name": "article1",
+                    "url": "https://www.admin.ch/opc/en/classified-compilation/19995395/index.html",
+                }
+            ],
+        }
+        await autogen_chat.websocket.send_text(json.dumps(reply))
+        await asyncio.sleep(0.05)
         # here add the next steps (classification ...)
         # await autogen_chat.research(data)
     except Exception as e:

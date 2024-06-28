@@ -8,34 +8,37 @@ export const chatStore = (set, get) => ({
 
     clearChatMessages: () => set({ chatMessages: [] }),
     addToChatMessage: (msg, msg_from) => {
-        set( (state) => ({ 
-            chatMessages: [...state.chatMessages,{
-                id: state.chatMessages.length +1,
+        set((state) => ({
+            chatMessages: [...state.chatMessages, {
+                id: state.chatMessages.length + 1,
                 message: msg,
                 msg_from: msg_from,
             }]
         }))
     },
-    
+
     initChatWebSocket: () => {
         const chat_id = uuidv4()
-        const ws = new WebSocket(ApiPath+chat_id);
+        const ws = new WebSocket(ApiPath + chat_id);
         ws.onopen = (event) => {
-            console.log("Websocket connected",chat_id )
-            set(() => ({currWebSocket: ws}))
+            console.log("Websocket connected", chat_id)
+            set(() => ({ currWebSocket: ws }))
         };
         ws.onmessage = function (event) {
-            get().addToChatMessage(event.data, "gpt")
-            set(() => ({pendingResponse: false}))
+            const data = JSON.parse(event.data)
+            console.log(data)
+            // parse data
+            get().addToChatMessage(data.content, data.sender)
+            set(() => ({ pendingResponse: false }))
         };
     },
 
     sendChatMessageAsync: async (msg) => {
         try {
-            if (get().currWebSocket !== null ) {
-                get().addToChatMessage(msg,  "user")
+            if (get().currWebSocket !== null) {
+                get().addToChatMessage(msg, "user")
                 get().currWebSocket.send(msg)
-                set(() => ({pendingResponse: true}))
+                set(() => ({ pendingResponse: true }))
             } else {
                 console.log("Websocket not available")
             }
@@ -43,5 +46,5 @@ export const chatStore = (set, get) => ({
             console.log(err)
         }
     },
-    
+
 })

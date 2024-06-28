@@ -44,7 +44,7 @@ class AutogenChat:
             Start your summary by saying "Case Summary:".
             Be concise!
             Do not reference specific legal article numbers.
-            Finish your reply by asking the client to either say "exit" if the summary is good or to provide any additional informations or corrections to edit the summary.
+            Finish your reply by asking the client to either say "next" if the summary is good or to provide any additional informations or corrections to edit the summary.
             If relevant and appropriate, suggest few examples of key informations that could be added to the summary.
             """,
         )
