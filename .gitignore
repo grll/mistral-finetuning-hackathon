@@ -1,0 +1,7 @@
+.DS_Store
+.venv
+__pycache__
+.env
+.mypy_cache
+.cache
+node_modules
