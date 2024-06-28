@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import {useState, Fragment} from 'react';
+import { useState, Fragment } from 'react';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -37,7 +37,7 @@ function CustomizedInputBase() {
 
     const clickHandler = async (e) => {
         if (message.trim().length == 0)
-            return 
+            return
         setMessage("")
         sendChatMessageAsync(message)
 
@@ -53,51 +53,51 @@ function CustomizedInputBase() {
     };
 
     return (
-      <Paper sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: "auto" }} >
-        <InputBase 
-          onChange={event=>{        
-            setMessage(event.target.value)
-          }}
-          id="message_box"
-          onKeyDown={handleKeyDown}
-          value={message}
-          sx={{ ml: 1, flex: 1 }}
-          placeholder="Write your legal situation..."
-          disabled={pendingResponse}
-          inputRef={(input) => {
-            if(input != null) {
-               input.focus();
-            }
-          }}
-        />
-        <IconButton id="send_message" disabled={pendingResponse} onClick={clickHandler} type="button" sx={{ p: '10px' }} aria-label="search">
-            {!pendingResponse &&
-                <PlayArrowIcon id="send_ok"/>
-            }
-            {pendingResponse &&
-                <CircularProgress size="1rem"/>
-            }
-        </IconButton>
-        <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-        <IconButton disabled={true} color="primary" sx={{ p: '10px' }} aria-label="directions">
-          <MicIcon />
-        </IconButton>
-        <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-            <Alert severity="error" sx={{ width: '100%' }}>
-                Error sending message
-            </Alert>
-        </Snackbar>
-      </Paper>
+        <Paper sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: "auto" }} >
+            <InputBase
+                onChange={event => {
+                    setMessage(event.target.value)
+                }}
+                id="message_box"
+                onKeyDown={handleKeyDown}
+                value={message}
+                sx={{ ml: 1, flex: 1 }}
+                placeholder="Write your legal situation..."
+                disabled={pendingResponse}
+                inputRef={(input) => {
+                    if (input != null) {
+                        input.focus();
+                    }
+                }}
+            />
+            <IconButton id="send_message" disabled={pendingResponse} onClick={clickHandler} type="button" sx={{ p: '10px' }} aria-label="search">
+                {!pendingResponse &&
+                    <PlayArrowIcon id="send_ok" />
+                }
+                {pendingResponse &&
+                    <CircularProgress size="1rem" />
+                }
+            </IconButton>
+            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+            <IconButton disabled={true} color="primary" sx={{ p: '10px' }} aria-label="directions">
+                <MicIcon />
+            </IconButton>
+            <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                <Alert severity="error" sx={{ width: '100%' }}>
+                    Error sending message
+                </Alert>
+            </Snackbar>
+        </Paper>
     );
 }
 
 const ChatDialog = () => {
     const chatMessages = useBoundStore((state) => state.chatMessages)
     return (
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column',   }}>
-            <Box sx={{  flex: 1, display: 'flex', justifyContent:"flex-end", alignItems:"end" }} >
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', }}>
+            <Box sx={{ flex: 1, display: 'flex', justifyContent: "flex-end", alignItems: "end" }} >
                 <Grid container >
-                    {chatMessages.map(({id, message, msg_from}) => {
+                    {chatMessages.map(({ id, message, msg_from }) => {
 
                         return (
                             <Fragment key={id}>
@@ -110,11 +110,19 @@ const ChatDialog = () => {
                                             </Typography>
                                         </Fragment>
                                     )}
-                                    {msg_from === "gpt" && (
+                                    {msg_from === "dona" && (
                                         <Fragment>
                                             <AssistantIcon style={{ marginTop: "10px", color: "darkgray" }} />
                                             <Typography sx={{ my: 1.5, mx: 2, whiteSpace: "pre-line", textAlign: "center" }} color="text.secondary">
                                                 Dona <span style={{ color: "lightgray" }}>Legal Assistant</span>
+                                            </Typography>
+                                        </Fragment>
+                                    )}
+                                    {msg_from === "rachel" && (
+                                        <Fragment>
+                                            <AssistantIcon style={{ marginTop: "10px", color: "darkgray" }} />
+                                            <Typography sx={{ my: 1.5, mx: 2, whiteSpace: "pre-line", textAlign: "center" }} color="text.secondary">
+                                                Rachel <span style={{ color: "lightgray" }}>Paralegal Researcher</span>
                                             </Typography>
                                         </Fragment>
                                     )}
@@ -126,11 +134,12 @@ const ChatDialog = () => {
                                 </Grid>
                             </Fragment>
 
-                    )})}
+                        )
+                    })}
                 </Grid>
             </Box>
             <Box sx={{ p: 1, bgcolor: '#eaeff1', marginTop: "auto" }}>
-                <CustomizedInputBase/>
+                <CustomizedInputBase />
             </Box>
         </Box>
     )

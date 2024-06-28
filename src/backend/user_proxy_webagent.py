@@ -1,20 +1,30 @@
 import autogen
 from autogen import Agent, ConversableAgent
 from typing import Any, Dict, List, Optional, Tuple, Union
+import json
+
 try:
     from termcolor import colored
 except ImportError:
+
     def colored(x, *args, **kwargs):
         return x
+
 
 class UserProxyWebAgent(autogen.UserProxyAgent):
     def __init__(self, *args, **kwargs):
         super(UserProxyWebAgent, self).__init__(*args, **kwargs)
         self._reply_func_list = []
         self.register_reply([Agent, None], ConversableAgent.generate_oai_reply)
-        self.register_reply([Agent, None], ConversableAgent.generate_code_execution_reply)
-        self.register_reply([Agent, None], ConversableAgent.generate_function_call_reply)
-        self.register_reply([Agent, None], UserProxyWebAgent.a_check_termination_and_human_reply)
+        self.register_reply(
+            [Agent, None], ConversableAgent.generate_code_execution_reply
+        )
+        self.register_reply(
+            [Agent, None], ConversableAgent.generate_function_call_reply
+        )
+        self.register_reply(
+            [Agent, None], UserProxyWebAgent.a_check_termination_and_human_reply
+        )
 
     async def a_check_termination_and_human_reply(
         self,
@@ -38,7 +48,10 @@ class UserProxyWebAgent(autogen.UserProxyAgent):
             # if the human input is empty, and the message is a termination message, then we will terminate the conversation
             reply = reply if reply or not self._is_termination_msg(message) else "exit"
         else:
-            if self._consecutive_auto_reply_counter[sender] >= self._max_consecutive_auto_reply_dict[sender]:
+            if (
+                self._consecutive_auto_reply_counter[sender]
+                >= self._max_consecutive_auto_reply_dict[sender]
+            ):
                 if self.human_input_mode == "NEVER":
                     reply = "exit"
                 else:
@@ -69,7 +82,7 @@ class UserProxyWebAgent(autogen.UserProxyAgent):
             print(colored(f"\n>>>>>>>> {no_human_input_msg}", "red"), flush=True)
 
         # stop the conversation
-        if reply == "exit":
+        if reply == "next":
             # reset the consecutive_auto_reply_counter
             self._consecutive_auto_reply_counter[sender] = 0
             return True, None
@@ -94,7 +107,12 @@ class UserProxyWebAgent(autogen.UserProxyAgent):
     async def a_get_human_input(self, prompt: str) -> str | None:
         last_message = self.last_message()
         if last_message["content"]:
-            await self.client_receive_queue.put(last_message["content"])
+            # very hack way to retrieve the sender name but couldnt find a better way for now
+            [k for k in self.chat_messages.keys()][0].name
+
+            last_message["sender"] = [k for k in self.chat_messages.keys()][0].name
+
+            await self.client_receive_queue.put(json.dumps(last_message))
             reply = await self.client_sent_queue.get()
             if reply and reply == "DO_FINISH":
                 return "exit"
