@@ -15,6 +15,10 @@ import AssistantIcon from '@mui/icons-material/Assistant';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
+import Avatar from '@mui/material/Avatar';
+import imageUrlDona from '../../../assets/dona.png';
+import imageUrlRachel from '../../../assets/rachel.png';
+import imageUrlYou from '../../../assets/you.webp';
 
 function CustomizedInputBase() {
     const sendChatMessageAsync = useBoundStore((state) => state.sendChatMessageAsync)
@@ -104,7 +108,7 @@ const ChatDialog = () => {
                                 <Grid item xs={1} sx={{ borderTop: "1px solid #2222", alignItems: "center", justifyContent: "center", display: "flex", flexDirection: "column" }}>
                                     {msg_from === "user" && (
                                         <Fragment>
-                                            <PersonIcon style={{ marginTop: "10px", color: "darkgray" }} />
+                                            <Avatar src={imageUrlYou} sx={{ width: 60, height: 60 }} />
                                             <Typography sx={{ my: 1.5, mx: 2, whiteSpace: "pre-line", textAlign: "center" }} color="text.secondary">
                                                 You <span style={{ color: "lightgray" }}>Client</span>
                                             </Typography>
@@ -112,7 +116,7 @@ const ChatDialog = () => {
                                     )}
                                     {msg_from === "dona" && (
                                         <Fragment>
-                                            <AssistantIcon style={{ marginTop: "10px", color: "darkgray" }} />
+                                            <Avatar src={imageUrlDona} sx={{ width: 60, height: 60 }} />
                                             <Typography sx={{ my: 1.5, mx: 2, whiteSpace: "pre-line", textAlign: "center" }} color="text.secondary">
                                                 Dona <span style={{ color: "lightgray" }}>Legal Assistant</span>
                                             </Typography>
@@ -120,7 +124,7 @@ const ChatDialog = () => {
                                     )}
                                     {msg_from === "rachel" && (
                                         <Fragment>
-                                            <AssistantIcon style={{ marginTop: "10px", color: "darkgray" }} />
+                                            <Avatar src={imageUrlRachel} sx={{ width: 60, height: 60 }} />
                                             <Typography sx={{ my: 1.5, mx: 2, whiteSpace: "pre-line", textAlign: "center" }} color="text.secondary">
                                                 Rachel <span style={{ color: "lightgray" }}>Paralegal Researcher</span>
                                             </Typography>
