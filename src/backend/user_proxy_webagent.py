@@ -82,7 +82,7 @@ class UserProxyWebAgent(autogen.UserProxyAgent):
             print(colored(f"\n>>>>>>>> {no_human_input_msg}", "red"), flush=True)
 
         # stop the conversation
-        if reply == "next":
+        if reply == "next" or reply == "exit":
             # reset the consecutive_auto_reply_counter
             self._consecutive_auto_reply_counter[sender] = 0
             return True, None

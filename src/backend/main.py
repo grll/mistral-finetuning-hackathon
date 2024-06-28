@@ -7,17 +7,19 @@ from autogen_chat import AutogenChat
 import asyncio
 import uvicorn
 from dotenv import load_dotenv
-# import openai
-# import os
 
-from src.classifier import Classifier
+from src.classifier import LLMClassifier
 from prompts import PROMPT_SYSTEM, PROMPT_TEMPLATE
 from rag import RAGModel
 from utils import Case, LawDomain
 
 load_dotenv()
 
-classifier = Classifier.from_pretrained("data/classifier_tfidflgbm")
+#classifier = Classifier.from_pretrained("data/classifier_tfidflgbm")
+classifier = LLMClassifier(
+    model_id='ft:open-mistral-7b:41dfebed:20240628:9f2401ad',
+    api_key=os.environ.get("MISTRAL_API_KEY", "")
+)
 
 config = {
     # rag knowledge path
@@ -38,7 +40,7 @@ config = {
     "n_results": 5,
     # completion model
     "completion_provider": "mistral",
-    "completion_model_deployment": "open-mistral-7b",
+    "completion_model_deployment": "mistral-large-latest",
     "completion_api_key": os.environ.get("MISTRAL_API_KEY"),
     "completion_api_version": "",
     "completion_endpoint": "",
@@ -58,10 +60,6 @@ for name in mas_to_mad.values():
         config=config,
         force_collection_creation=False,
     )
-
-# _ = load_dotenv(find_dotenv()) # read local .env file
-# openai.api_key = os.environ['OPENAI_API_KEY']
-# openai.log='debug'
 
 app = FastAPI()
 app.autogen_chat = {}
@@ -149,21 +147,13 @@ async def websocket_endpoint(websocket: WebSocket, chat_id: str):
             domain=LawDomain.CRIMINAL,
         )
         rag_output = rag_models[mas_to_mad[case_type]].predict(legal_case)
-        # {
-        #     "answer": answer,
-        #     "support_content": relevant_chunks_str,
-        # }
-        # call the retrieve function
-        # reply as rachel:
+
+        print(f"Relevant articles: {rag_output['support_content']}")
+
         reply = {
             "sender": "rachel",
             "content": rag_output["answer"],
-            "sources": [
-                {
-                    "name": "article1",
-                    "url": "https://www.admin.ch/opc/en/classified-compilation/19995395/index.html",
-                }
-            ],
+            "sources": [],
         }
         await autogen_chat.websocket.send_text(json.dumps(reply))
         await asyncio.sleep(0.05)
