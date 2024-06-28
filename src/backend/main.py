@@ -1,14 +1,63 @@
 import re
 import json
+import os
 
 from fastapi import FastAPI, WebSocket
 from autogen_chat import AutogenChat
 import asyncio
 import uvicorn
-# from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 # import openai
 # import os
 
+from src.classifier import Classifier
+from prompts import PROMPT_SYSTEM, PROMPT_TEMPLATE
+from rag import RAGModel
+from utils import Case, LawDomain
+
+load_dotenv()
+
+classifier = Classifier.from_pretrained("data/classifier_tfidflgbm")
+
+config = {
+    # rag knowledge path
+    "knowledge_folder": "data/federal_law",
+    # rag prompts
+    "prompt_system": PROMPT_SYSTEM,
+    "prompt_template": PROMPT_TEMPLATE,
+    # splitter
+    "chunk_size": 2000,
+    "chunk_overlap": 100,
+    # embedding model
+    "embedding_provider": "mistral",
+    "embedding_model_deployment": "mistral-embed",
+    "embedding_api_key": os.environ.get("MISTRAL_API_KEY"),
+    "embedding_api_version": "",
+    "embedding_endpoint": "",
+    # retrieval parameters
+    "n_results": 5,
+    # completion model
+    "completion_provider": "mistral",
+    "completion_model_deployment": "open-mistral-7b",
+    "completion_api_key": os.environ.get("MISTRAL_API_KEY"),
+    "completion_api_version": "",
+    "completion_endpoint": "",
+    "temperature": 0,
+}
+
+mas_to_mad = {
+    "Civil": "private",
+    "Criminal": "criminal",
+    "Public": "state",
+}
+
+rag_models = {}
+for name in mas_to_mad.values():
+    rag_models[name] = RAGModel(
+        expert_name=name,
+        config=config,
+        force_collection_creation=False,
+    )
 
 # _ = load_dotenv(find_dotenv()) # read local .env file
 # openai.api_key = os.environ['OPENAI_API_KEY']
@@ -76,19 +125,39 @@ async def websocket_endpoint(websocket: WebSocket, chat_id: str):
         _ = asyncio.gather(
             send_to_client(autogen_chat), receive_from_client(autogen_chat)
         )
-        print("before clarify")
         await autogen_chat.clarify(data)
-        print("after clarify")
 
         last_dona_message = autogen_chat.agent_dona.last_message()["content"]
         case_summary = extract_case_summary(last_dona_message)
+        print(f"Case Summary: {case_summary}")
 
         # classify the case summary
+        case_type = classifier.predict(case_summary)
+        print(f"Case Type: {case_type}")
+
+        reply = {
+            "sender": "rachel",
+            "content": f"I believe the case falls under {case_type} Law. I'm looking for relevant laws that apply...",
+        }
+        await autogen_chat.websocket.send_text(json.dumps(reply))
+        await asyncio.sleep(0.05)
+
+        legal_case = Case(
+            description=case_summary,
+            related_articles=[],
+            outcome=True,
+            domain=LawDomain.CRIMINAL,
+        )
+        rag_output = rag_models[mas_to_mad[case_type]].predict(legal_case)
+        # {
+        #     "answer": answer,
+        #     "support_content": relevant_chunks_str,
+        # }
         # call the retrieve function
         # reply as rachel:
         reply = {
             "sender": "rachel",
-            "content": "To solve your case you should use article 1 and 2",
+            "content": rag_output["answer"],
             "sources": [
                 {
                     "name": "article1",
