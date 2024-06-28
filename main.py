@@ -1,8 +1,12 @@
+import os
+
 from rag import RAGModel
 from utils import Case, LawDomain
 from prompts import PROMPT_SYSTEM, PROMPT_TEMPLATE
 
 from dotenv import dotenv_values
+
+LAW_PATH = os.path.join("data", "federal_law")
 
 def main() -> None:
     # Load the environment variables
@@ -11,13 +15,13 @@ def main() -> None:
     # Inject the environment variables inside the configuration
     config = {
         # rag knowledge path
-        "knowledge_folder":"data/swiss_lex",
+        "knowledge_folder":"data/federal_law",
         # rag prompts
         "prompt_system":PROMPT_SYSTEM,
         "prompt_template": PROMPT_TEMPLATE,
         # splitter
-        "chunk_size":300,
-        "chunk_overlap":10,
+        "chunk_size":2000,
+        "chunk_overlap":100,
         # embedding model
         "embedding_provider":"mistral",
         "embedding_model_deployment":env_var["MISTRAL_EMBED_MODEL_DEPLOYMENT"],
@@ -57,13 +61,26 @@ def main() -> None:
         ),
     ]
 
-    model = RAGModel(
-        expert_name="generic",
-        config=config,
-        force_collection_creation=False,
-    )
+    experts_config = [
+        ("state", os.path.join(LAW_PATH, "1 State - People - Authorities")),
+        ("private", os.path.join(LAW_PATH, "2 Private law - Administration of civil justice - Enforcement")),
+        ("criminal", os.path.join(LAW_PATH, "3 Criminal law - Administration of criminal justice - Execution of sentences")),
+        #("finance", os.path.join(LAW_PATH, "6 Finance")),
+        #("public work", os.path.join(LAW_PATH, "7 Public works - Energy - Transport")),
+        #("health", os.path.join(LAW_PATH, "8 Health - Employment - Social security")),
+    ]
 
-    model.predict_from_dataset(ds_cases)
+    models = {}
+    for name, knowledge_path in experts_config:
+        config["knowledge_folder"] = knowledge_path
+        models[name] = RAGModel(
+            expert_name=name,
+            config=config,
+            force_collection_creation=False,
+        )
+
+    models["criminal"].predict_from_dataset(ds_cases)
+    models["private"].predict_from_dataset(ds_cases)
 
 if __name__ == "__main__":
     main()

@@ -1,9 +1,10 @@
 from typing import List, Dict, Optional, Literal
 
-import os
+import glob
 import json
 import uuid
 from time import time
+from bs4 import BeautifulSoup
 
 import chromadb
 from chromadb.api.types import QueryResult
@@ -109,7 +110,7 @@ class EmbeddingModel:
                 api_key=api_key,
                 model_deployment=model_deployment,
             )
-        self.batch_size = 10
+        self.batch_size = 1
 
     def embed(self, input: Documents):
         nb_batches = len(input) // self.batch_size
@@ -153,6 +154,7 @@ class RAGModel:
             tenant=DEFAULT_TENANT,
             database=DEFAULT_DATABASE,
         )
+        # TODO: the name of the collection could actually be a parameter of predict, to allow the model to switch between vector db
         self.vectordb = self.db_client.get_or_create_collection(name=expert_name)
         # Empty collection, need to populate it
         if force_collection_creation or self.vectordb.count() == 0:
@@ -170,25 +172,16 @@ class RAGModel:
     def create_vectordb(self):
         """Load local document stored as html and add them to the vector database (Chroma Collection)"""
         # Collect all the files to process
-        all_files = os.listdir(self.knowledge_folder)
+        all_files = glob.glob(f"{self.knowledge_folder}/**/**/**.html", recursive=True)
 
-        # Load the documents
-        docs = []
+        # Load & slice the documents by section/articles
+        chunks = []
         for f_path in all_files:
-            file_path = os.path.join(self.knowledge_folder, f_path)
-            if os.path.isfile(file_path):
-                # TODO: pass parameters to the bs_kwargs argument to cleanup the html
-                loader = BSHTMLLoader(file_path)
-                docs += loader.load()
-        
-        # Slice the documents into chunks
-        # TODO: smarter chunking, based on the title/reference in the html files
-        chunks = self.splitter.split_documents(docs)[:10]
-
-        chunks_as_strings = [chunk.page_content for chunk in chunks]
+            # TODO: store metadata
+            chunks += self._load_and_split_document(f_path)
 
         # Embedd the content
-        vectors = self.embedding_model.embed(chunks_as_strings)
+        vectors = self.embedding_model.embed(chunks)
 
         # Create ids for each chunk
         ids = [str(uuid.uuid4()) for _ in range(len(chunks))]
@@ -196,10 +189,28 @@ class RAGModel:
         # update the vectordb with the new chunks & vectors
         self.vectordb.add(
             embeddings=vectors,
-            documents=chunks_as_strings,
+            documents=chunks,
             ids=ids,
-            metadatas=[chunk.metadata for chunk in chunks],
+            metadatas=None,
         )
+
+
+    def _load_and_split_document(self, f_path: str) -> List[str]:
+        """Load the document (html page), extract the section tags."""
+        with open(f_path, "r") as f:
+            soup = BeautifulSoup(f.read(), 'html.parser')
+            sections = soup.find_all("section")
+
+        chunks = []
+        for sec in sections:
+            # heuristic to keep only legal text
+            if "Art" in sec.text and len(sec.text) > 10:
+                if len(sec.text) > self.splitter._chunk_size:
+                    chunks += self.splitter.split_text(sec.text)
+                else:
+                    chunks.append(sec.text)
+        return chunks
+            
 
     def predict(self, case: Case):
         """
