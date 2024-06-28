@@ -9,6 +9,9 @@ import uvicorn
 # import openai
 # import os
 
+from src.classifier import Classifier
+
+classifier = Classifier.from_pretrained("data/classifier_tfidflgbm")
 
 # _ = load_dotenv(find_dotenv()) # read local .env file
 # openai.api_key = os.environ['OPENAI_API_KEY']
@@ -76,19 +79,24 @@ async def websocket_endpoint(websocket: WebSocket, chat_id: str):
         _ = asyncio.gather(
             send_to_client(autogen_chat), receive_from_client(autogen_chat)
         )
-        print("before clarify")
         await autogen_chat.clarify(data)
-        print("after clarify")
 
         last_dona_message = autogen_chat.agent_dona.last_message()["content"]
         case_summary = extract_case_summary(last_dona_message)
+        print(f"Case Summary: {case_summary}")
 
         # classify the case summary
+        case_type = classifier.predict(case_summary)
+        print(f"Case Type: {case_type}")
+
         # call the retrieve function
         # reply as rachel:
         reply = {
             "sender": "rachel",
-            "content": "To solve your case you should use article 1 and 2",
+            "content": f"""
+            I gathered the following case summary: {case_summary}
+            I detected your case as being {case_type}.
+            """,
             "sources": [
                 {
                     "name": "article1",
