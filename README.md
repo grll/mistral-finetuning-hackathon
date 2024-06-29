@@ -6,7 +6,7 @@ We introduce Alplex an AI based virtual lawyer office that helps you tackle your
 
 Upon receiving your legal case we first offer you the chance to clarify and summarize it with our AI Legal Assistant Dona (an autogen Agent backed by a finetuned mistral 7B).
 
-Once you are happy with your case our second AI para-legal agent Rachel take over to classify your case in the right law category and perform a RAG (backed by mistral-large model).
+Once you are happy with your case our second AI para-legal agent Rachel take over to classify your case in the right law category and perform a RAG over relevant swiss laws (backed by mistral-large model).
 
 This is what the application look like:
 
