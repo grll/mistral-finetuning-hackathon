@@ -1,6 +1,6 @@
 # Mistral Finetuning Hackathon 2024
 
-If you are looking at how to run the solution: [see here](#-how-to-run)
+If you are looking at how to run the solution: [see here](#how-to-run)
 
 ## Alplex an AI based virtual lawyer office
 
