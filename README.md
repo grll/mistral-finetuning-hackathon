@@ -17,7 +17,11 @@ We leveraged mistral finetuning API for 2 key parts of our solution:
 1. improve several aspects of Dona including guardrailing and distilling from larger models.
 2. improve the classification of law cases into relevant law categories.
 
+Details of how finetuning improved the solution is provided below.
+
 ## Solution Diagram
+
+
 
 ## Details of our contributions
 
