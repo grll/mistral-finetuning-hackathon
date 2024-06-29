@@ -8,18 +8,18 @@ import asyncio
 import uvicorn
 from dotenv import load_dotenv
 
-from src.classifier import LLMClassifier
+from src.classifier import Classifier, LLMClassifier
 from prompts import PROMPT_SYSTEM, PROMPT_TEMPLATE
 from rag import RAGModel
 from utils import Case, LawDomain
 
 load_dotenv()
 
-#classifier = Classifier.from_pretrained("data/classifier_tfidflgbm")
-classifier = LLMClassifier(
-    model_id='ft:open-mistral-7b:41dfebed:20240628:9f2401ad',
-    api_key=os.environ.get("MISTRAL_API_KEY", "")
-)
+classifier = Classifier.from_pretrained("data/classifier_tfidflgbm")
+# classifier = LLMClassifier(
+#     model_id='ft:open-mistral-7b:41dfebed:20240628:9f2401ad',
+#     api_key=os.environ.get("MISTRAL_API_KEY", "")
+# )
 
 config = {
     # rag knowledge path
