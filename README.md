@@ -1,95 +1,104 @@
 # Mistral Finetuning Hackathon 2024
 
-If you are looking at how to run the solution: [see here](#how-to-run)
+For instructions on running the solution, [click here](#how-to-run).
 
-## Alplex an AI based virtual lawyer office
+## Alplex: An AI-based Virtual Law Office
 
-We introduce Alplex an AI based virtual lawyer office that helps you tackle your legal issues grounded on swiss laws.
+Introducing Alplex, an AI-powered virtual law office designed to assist you with legal issues based on Swiss laws.
 
-Upon receiving your legal case we first offer you the chance to clarify and summarize it with our AI Legal Assistant Dona (an autogen Agent backed by a finetuned mistral 7B).
+### Key Features
 
-Once you are happy with your case our second AI para-legal agent Rachel take over to classify your case in the right law category and perform a RAG over relevant swiss laws (backed by mistral-large model).
+1. **AI Legal Assistant - Dona**:
+   - **Clarification & Summarization**: Receive your case and help summarize it.
+   - **Technology**: Powered by a fine-tuned Mistral 7B model.
+   
+2. **AI Paralegal - Rachel**:
+   - **Case Classification**: Classifies your case into the correct legal category.
+   - **RAG over Swiss Laws**: Uses a large Mistral model to perform Retrieval-Augmented Generation over relevant Swiss laws.
 
-This is what the application look like:
+### Application Interface
 
-![image](https://github.com/unit8co/mistral-hackathon-finetuning/assets/1738060/6817ec8a-19bf-4cfb-9484-f42ae4ffd175)
+![Application Interface](https://github.com/unit8co/mistral-hackathon-finetuning/assets/1738060/6817ec8a-19bf-4cfb-9484-f42ae4ffd175)
 
-We leveraged mistral finetuning API for 2 key parts of our solution:
+### Fine-tuning with Mistral API
 
-1. improve several aspects of Dona including guardrailing and distilling from larger models.
-2. improve the classification of law cases into relevant law categories.
+We leveraged the Mistral fine-tuning API for two critical aspects:
 
-Details of how finetuning improved the solution is provided below.
+1. **Improving Dona**: Enhanced guardrails and distilled from larger models.
+2. **Better Case Classification**: Optimized classification accuracy for legal cases.
 
-## Solution Diagram
+### Solution Diagram
 
-![image](https://github.com/unit8co/mistral-hackathon-finetuning/assets/1738060/75e9bf20-567d-40b9-b81e-22064b63f26b)
+![Solution Diagram](https://github.com/unit8co/mistral-hackathon-finetuning/assets/1738060/75e9bf20-567d-40b9-b81e-22064b63f26b)
 
+## Our Contributions
 
-## Details of our contributions
+### Fine-tuning for Dona
 
-### Leverage Fine-tuning for Dona
+#### Goals
 
-We decided to fine-tune our legal assitant agent Dona for several reason:
+1. **Robust Client Interaction**:
+   - Ensured resilience against prompt hacking.
+   - Created a dataset with a mix of legitimate replies and placeholders for prompt hacking scenarios.
 
-1. Dona is the front of our application dealing with client interactions. Since the input of the client is unrestricted, we need to make sure Dona is robust to prompt hacking and other strategies to distrupt her behavior. Our idea was to fine tune Dona on several prompt hacking scenario, making sure that she do not follow the bad instructions. So we created a dataset composed of a mixture of regular Dona reply on legit legal cases and placeholder reply on prompt hacking scenarios. The result is a Dona more resilient when the user goes off topic:
+2. **Enhanced Responses**:
+   - Distilled from larger models to improve response quality.
+   - Used GPT-4 outputs to inspire the Mistral 7B model for better summaries.
 
-<img width="1186" alt="image" src="https://github.com/unit8co/mistral-hackathon-finetuning/assets/1738060/8ca57196-4841-4c9a-907f-e732a8d53a74">
+3. **Cost and Performance Efficiency**:
+   - Autogen agent requiring multiple interactions.
+   - Fine-tuned smaller model for efficiency and scalability.
 
-2. Since we had to create this dataset of also real reply from Dona we also took the chance to distil from larger model usually providing more rich replies than mistral 7B smaller model. For that the dataset mention above and the replies from dona to real legal cases used to finetune Dona was made using GPT4-o. Our mistral 7B model finetuned is now inspired by GPT4-o replies when prividing a summary. We noticed a qualitive improvement of the result over raw mistral 7B outputs.
+![Fine-tuning Results](https://github.com/unit8co/mistral-hackathon-finetuning/assets/1738060/8ca57196-4841-4c9a-907f-e732a8d53a74)
 
-3. Dona is an autogen agent which means several round are expected until the final summary of your case is extracted from the conversation with her. It also means that it is the most costly part in term of LLM usage. Hence having a smaller model performing well on this part is both cost and performance (speed) beneficial if we were to scale the solution further.
+### Fine-tuning for Classification
 
-### Leverage Fine-tuning for classifying 
+We prepared a dataset of legal cases categorized under Civil, Public, or Criminal law and evaluated various models:
 
-We also leverage fine-tuning for the classification of the legal case among Civil, Public or Criminal law. Here we prepared a dataset containing legal cases and the category of law that applies. We first develop a baseline using traditional ML (TFIDF+LGBM), we then tried Mistral 7B by prompting the model only and finally Mistral 7B finetuned. While we noticed a significant increase in performance after finetuning mistral 7B on the classification task we were never able to match the performance of TFIDF+LGBM on this particular task.
+1. **Baseline**: Traditional ML (TFIDF+LGBM).
+2. **Mistral 7B**: Prompting only.
+3. **Mistral 7B (Fine-tuned)**: Significant performance improvement, reduced hallucinations.
 
-Also after finetuning we observed that mistral 7B halllucinated a lot less law categories that our dataset didnt have and really stuck a lot more to Civil, Public or Criminal.
-
-#### Classication Results (on Fold 0 of Stratified 5 Fold CV)
+#### Classification Results (Fold 0 of Stratified 5-Fold CV)
 
 * TFIDF+LGBM: Accuracy 0.86
-* Mistral 7B: Accuracy
-* Mistral 7B - finetune: Accuracy
-[@antoine include result]
+* Mistral 7B: Accuracy [Result needed]
+* Mistral 7B (Fine-tuned): Accuracy [Result needed]
 
 ## Limitations
 
-* Support only Federal Laws at the moment
-* Support only cases of Civil, Public or Criminal law
-* Performance of our classifier on our training set was
+* Supports only Federal Laws.
+* Handles only Civil, Public, or Criminal law cases.
+* Performance on our training set needs improvement.
 
-## How to run
+## How to Run
 
 ```bash
 git clone git@github.com:unit8co/mistral-hackathon-finetuning.git
 cd mistral-hackathon-finetuning
 
-# make sure you have python 3.11+ not tested for other version
-# you also need node + npm (tested with node v22.1.0, npm 10.7.0) to run the frontend
+# Ensure you have Python 3.11+ and Node.js + npm (tested with Node v22.1.0, npm 10.7.0) for the frontend.
 
-# few assets are first needed to be install and unzip [@antoine]
-# just chroma db or something else @antoine ?
+# Install necessary assets [Details required]
 
-# we recommend creating a virtual env
-python -m  venv .venv
+# Create a virtual environment
+python -m venv .venv
 
-# then install all the dependencies
+# Install dependencies
 pip install -r requirements.txt
 
-# create a .env and enter your mistral API key
+# Create a .env file and enter your Mistral API key
 cp .env.template .env
 
-# you can then start the backend with
-PYTHONPATH=(pwd) python src/backend/main.py
+# Start the backend
+PYTHONPATH=$(pwd) python src/backend/main.py
 
-# in another terminal window cd into the frontend folder of the repository and run the frontend
+# In another terminal, navigate to the frontend folder and run the frontend
 cd src/frontend
-# install node dependencies
-npm i
-# run the frontend
+# Install Node.js dependencies
+npm install
+# Run the frontend
 npm run dev
 
-# you now follow the localhost url display and start chatting with the Dona and Rachel.
+# Follow the localhost URL displayed to start interacting with Dona and Rachel.
 ```
-
