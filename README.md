@@ -79,7 +79,10 @@ cd mistral-hackathon-finetuning
 
 # Ensure you have Python 3.11+ and Node.js + npm (tested with Node v22.1.0, npm 10.7.0) for the frontend.
 
-# Install necessary assets [Details required]
+# Install necessary assets:
+# download chroma.zip at https://mistral-finetuning-hackathon-2024.s3.eu-central-1.amazonaws.com/chroma.zip
+# move it into the root of the repository
+# unzip it in the root of the repo
 
 # Create a virtual environment
 python -m venv .venv
