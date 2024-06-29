@@ -21,6 +21,7 @@ Details of how finetuning improved the solution is provided below.
 
 ## Solution Diagram
 
+![image](https://github.com/unit8co/mistral-hackathon-finetuning/assets/1738060/75e9bf20-567d-40b9-b81e-22064b63f26b)
 
 
 ## Details of our contributions
