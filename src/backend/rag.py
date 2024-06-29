@@ -11,8 +11,6 @@ from chromadb.api.types import QueryResult
 from chromadb.config import DEFAULT_TENANT, DEFAULT_DATABASE, Settings
 from chromadb import Documents, EmbeddingFunction, Embeddings
 
-from langchain_core.documents.base import Document
-from langchain_community.document_loaders import BSHTMLLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 from openai import AzureOpenAI

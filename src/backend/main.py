@@ -8,7 +8,7 @@ import asyncio
 import uvicorn
 from dotenv import load_dotenv
 
-from src.classifier import Classifier, LLMClassifier
+from classifier import Classifier, LLMClassifier
 from prompts import PROMPT_SYSTEM, PROMPT_TEMPLATE
 from rag import RAGModel
 from utils import Case, LawDomain
