@@ -10,7 +10,7 @@ Introducing Alplex, an AI-powered virtual law office designed to assist you with
 
 1. **AI Legal Assistant - Dona**:
    - **Clarification & Summarization**: Receive your case and help summarize it.
-   - **Technology**: Powered by a fine-tuned Mistral 7B model.
+   - **Technology**: Powered by an Autogen Conversable Agent and a fine-tuned Mistral 7B model.
    
 2. **AI Paralegal - Rachel**:
    - **Case Classification**: Classifies your case into the correct legal category.
