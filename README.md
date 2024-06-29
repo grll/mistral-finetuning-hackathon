@@ -31,7 +31,7 @@ We leveraged the Mistral fine-tuning API for two critical aspects:
 
 ![Solution Diagram](https://github.com/unit8co/mistral-hackathon-finetuning/assets/1738060/75e9bf20-567d-40b9-b81e-22064b63f26b)
 
-## Our Contributions
+## Finetuning Usage
 
 ### Fine-tuning for Dona
 
