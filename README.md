@@ -24,8 +24,8 @@ Introducing Alplex, an AI-powered virtual law office designed to assist you with
 
 We leveraged the Mistral fine-tuning API for two critical aspects:
 
-1. **Improving Dona**: Enhanced guardrails and distilled from larger models.
-2. **Better Case Classification**: Optimized classification accuracy for legal cases.
+1. **Improving Dona**: Enhanced guardrails and distilled from larger models (`notebooks/04_dona_finetuning.ipynb`)
+2. **Better Case Classification**: Optimized classification accuracy for legal cases. (`notebooks/05_classification_finetuning.ipynb`)
 
 ### Solution Diagram
 
@@ -38,12 +38,12 @@ We leveraged the Mistral fine-tuning API for two critical aspects:
 #### Goals
 
 1. **Robust Client Interaction**:
-   - Ensured resilience against prompt hacking.
+   - Good resilience against prompt hacking.
    - Created a dataset with a mix of legitimate replies and placeholders for prompt hacking scenarios.
 
 2. **Enhanced Responses**:
    - Distilled from larger models to improve response quality.
-   - Used GPT-4 outputs to inspire the Mistral 7B model for better summaries.
+   - Used GPT-4o outputs to inspire the Mistral 7B model for better summaries.
 
 3. **Cost and Performance Efficiency**:
    - Autogen agent requiring multiple interactions.
@@ -67,9 +67,10 @@ We prepared a dataset of legal cases categorized under Civil, Public, or Crimina
 
 ## Limitations
 
-* Supports only Federal Laws.
+* Supports only Swiss Federal Laws.
 * Handles only Civil, Public, or Criminal law cases.
-* Performance on our training set needs improvement.
+* Case classification could be improved (class imbalance).
+* The agentic RAG (Rachel) could make several iteration to improve the final answer.
 
 ## How to Run
 
