@@ -59,7 +59,7 @@ Also after finetuning we observed that mistral 7B halllucinated a lot less law c
 * Support only cases of Civil, Public or Criminal law
 * Performance of our classifier on our training set was
 
-## How to run
+##How to run
 
 ```bash
 git clone git@github.com:unit8co/mistral-hackathon-finetuning.git
