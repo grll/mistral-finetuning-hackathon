@@ -62,8 +62,8 @@ We prepared a dataset of legal cases categorized under Civil, Public, or Crimina
 #### Classification Results (Fold 0 of Stratified 5-Fold CV)
 
 * TFIDF+LGBM: Accuracy 0.86
-* Mistral 7B: Accuracy [Result needed]
-* Mistral 7B (Fine-tuned): Accuracy [Result needed]
+* Mistral 7B: Accuracy 0.55
+* Mistral 7B (Fine-tuned): Accuracy 0.71
 
 ## Limitations
 
