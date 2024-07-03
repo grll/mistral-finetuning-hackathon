@@ -1,3 +1,5 @@
+# This repository has moved: [https://github.com/unit8co/mistral-hackathon-finetuning](https://github.com/unit8co/mistral-hackathon-finetuning)
+
 # Mistral Finetuning Hackathon 2024
 
 For instructions on running the solution, [click here](#how-to-run).
